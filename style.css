@@ -15,14 +15,15 @@
     font-size: 30px;
     padding: 30px 8px;
     height: 50px;
-    width: 100%;
+    width: 500px;
     display: flex;
     align-content: center;
     flex-wrap: wrap;
     background-color: #f7f7f7;
-}
-
-#display {
+    text-overflow: ellipsis;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
     justify-content: flex-end;
 }
 

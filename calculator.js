@@ -6,7 +6,7 @@ let equation = [];
 
 let digits = document.querySelectorAll('.digit')
 digits.forEach(digit => digit.addEventListener('click', () => {
-    if (digit.value == 0 && currentValue.trim().length != 0) {
+    if (digit.value == 0 && (currentValue.trim().length != 0 || currentValue != 0)) {
         currentValue += digit.value;
     }
     //else if (digit.value == 0 && currentValue.length > 0) {
@@ -54,18 +54,17 @@ clear.addEventListener('click', () => {
 
 let del = document.querySelector('.delete')
 del.addEventListener('click', () => {
-    if (currentValue == ' 0.' || currentValue == ' ') {
+    if (currentValue.trim() == '0.' || currentValue == ' ') {
         console.log('1st')
-        currentValue = currentValue.slice(0, -2);
+        currentValue = currentValue.trim().slice(0, -2);
     }
-    else if (currentValue && currentValue !== ' ') {
-        currentValue = currentValue.slice(0, -1);
-
+    else if (currentValue) {
+        currentValue = currentValue.trim().slice(0, -1);
     }
     else if (!currentValue && equation.length > 0) {
         console.log('2nd')
-        currentValue = equation.pop().trim();
-        currentValue = currentValue.slice(0, -1);
+        currentValue = equation.pop();
+        currentValue = currentValue.trim().slice(0, -1);
     }
     subDisplay.textContent = equation.join(' ') + ' ' + currentValue;
 });
