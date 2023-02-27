@@ -6,35 +6,47 @@ let equation = [];
 
 let digits = document.querySelectorAll('.digit')
 digits.forEach(digit => digit.addEventListener('click', () => {
-    if (digit.value == 0 && currentValue != 0) {
+    if (digit.value == 0 && currentValue.trim().length != 0) {
         currentValue += digit.value;
     }
-    else if (digit.value == 0 && currentValue.length > 0) {
-        currentValue += digit.value;
-    }
+    //else if (digit.value == 0 && currentValue.length > 0) {
+    //    currentValue += digit.value;
+    //}
     else if (digit.value != 0) {
         currentValue += digit.value;
         }
-    subDisplay.textContent = currentValue
+    subDisplay.textContent = equation.join(' ') + ' ' + currentValue
+}));
+
+
+let operators = document.querySelectorAll('.operator')
+operators.forEach(operator => operator.addEventListener('click', () => {
+    if (operator.value !== '=' && currentValue != 0) {
+        equation.push(currentValue);
+        equation.push(operator.value);
+        currentValue = '';
+        subDisplay.textContent = equation.join(' ');
+    }
 }));
 
 
 let decimal = document.querySelector('.decimal');
 decimal.addEventListener('click', () => {
     if (currentValue.indexOf('.') == -1) {
-        if (!currentValue) {
-            currentValue = '0.';
+        if (!currentValue || currentValue == ' ') {
+            currentValue = ' 0.';
         }
         else {
             currentValue += decimal.value;
         }
-    subDisplay.textContent = currentValue
+    subDisplay.textContent = equation.join(' ') + ' ' + currentValue
 }});
 
 
 let clear = document.querySelector('.clear')
 clear.addEventListener('click', () => {
     currentValue = '';
+    equation = [];
     subDisplay.textContent = '';
     display.textContent = '';
 });
@@ -42,12 +54,18 @@ clear.addEventListener('click', () => {
 
 let del = document.querySelector('.delete')
 del.addEventListener('click', () => {
-    if (currentValue == '0.') {
+    if (currentValue == ' 0.' || currentValue == ' ') {
+        console.log('1st')
         currentValue = currentValue.slice(0, -2);
-        subDisplay.textContent = currentValue;
     }
-    else {
+    else if (currentValue && currentValue !== ' ') {
         currentValue = currentValue.slice(0, -1);
-        subDisplay.textContent = currentValue;
+
     }
+    else if (!currentValue && equation.length > 0) {
+        console.log('2nd')
+        currentValue = equation.pop().trim();
+        currentValue = currentValue.slice(0, -1);
+    }
+    subDisplay.textContent = equation.join(' ') + ' ' + currentValue;
 });
