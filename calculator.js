@@ -9,9 +9,6 @@ digits.forEach(digit => digit.addEventListener('click', () => {
     if (digit.value == 0 && (currentValue.trim().length != 0 || currentValue != 0)) {
         currentValue += digit.value;
     }
-    //else if (digit.value == 0 && currentValue.length > 0) {
-    //    currentValue += digit.value;
-    //}
     else if (digit.value != 0) {
         currentValue += digit.value;
         }
@@ -55,16 +52,17 @@ clear.addEventListener('click', () => {
 let del = document.querySelector('.delete')
 del.addEventListener('click', () => {
     if (currentValue.trim() == '0.' || currentValue == ' ') {
-        console.log('1st')
         currentValue = currentValue.trim().slice(0, -2);
     }
     else if (currentValue) {
         currentValue = currentValue.trim().slice(0, -1);
     }
     else if (!currentValue && equation.length > 0) {
-        console.log('2nd')
         currentValue = equation.pop();
         currentValue = currentValue.trim().slice(0, -1);
+        if (!currentValue) {
+            currentValue = equation.pop()
+        }
     }
     subDisplay.textContent = equation.join(' ') + ' ' + currentValue;
 });
