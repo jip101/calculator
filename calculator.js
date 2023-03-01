@@ -4,25 +4,38 @@ let currentValue = '';
 let equation = [];
 
 
-let digits = document.querySelectorAll('.digit')
+let digits = document.querySelectorAll('.digit');
 digits.forEach(digit => digit.addEventListener('click', () => {
     if (digit.value == 0 && (currentValue.trim().length != 0 || currentValue != 0)) {
         currentValue += digit.value;
     }
-    else if (digit.value != 0) {
+    else if (!currentValue || !isNaN(currentValue)) {
         currentValue += digit.value;
-        }
+    }
+    else if (isNaN(currentValue) || (!currentValue && equation.length > 0)) {
+        equation.push(currentValue);
+        currentValue = digit.value;
+    }
     subDisplay.textContent = equation.join(' ') + ' ' + currentValue
 }));
 
 
-let operators = document.querySelectorAll('.operator')
+let operators = document.querySelectorAll('.operator');
 operators.forEach(operator => operator.addEventListener('click', () => {
-    if (operator.value !== '=' && currentValue != 0) {
+    if (operator.value !== '=' && currentValue) {
         equation.push(currentValue);
         equation.push(operator.value);
         currentValue = '';
         subDisplay.textContent = equation.join(' ');
+    }
+    else if (operator.value === '=') {
+        if (currentValue) {
+            equation.push(currentValue);
+            currentValue = '';
+        }
+        equationCopy = [...equation];
+        ans = calculate(equationCopy);
+        display.textContent = ans;
     }
 }));
 
@@ -40,7 +53,7 @@ decimal.addEventListener('click', () => {
 }});
 
 
-let clear = document.querySelector('.clear')
+let clear = document.querySelector('.clear');
 clear.addEventListener('click', () => {
     currentValue = '';
     equation = [];
@@ -49,20 +62,67 @@ clear.addEventListener('click', () => {
 });
 
 
-let del = document.querySelector('.delete')
+let del = document.querySelector('.delete');
 del.addEventListener('click', () => {
-    if (currentValue.trim() == '0.' || currentValue == ' ') {
+    if (!currentValue && equation.length > 0) {
+        currentValue = equation.pop();
+        currentValue = currentValue.trim().slice(0, -1);
+        if (!currentValue && equation.length > 0) {
+            currentValue = equation.pop()
+        }
+    }
+    else if (currentValue.trim() == '0.' || currentValue == ' ') {
         currentValue = currentValue.trim().slice(0, -2);
     }
     else if (currentValue) {
         currentValue = currentValue.trim().slice(0, -1);
     }
-    else if (!currentValue && equation.length > 0) {
-        currentValue = equation.pop();
-        currentValue = currentValue.trim().slice(0, -1);
-        if (!currentValue) {
-            currentValue = equation.pop()
-        }
-    }
+
     subDisplay.textContent = equation.join(' ') + ' ' + currentValue;
 });
+
+
+function calculate (equationCopy) {
+    while (equationCopy.includes('*') || equationCopy.includes('/')) {
+        if (equationCopy.includes('*') && equationCopy.includes('/')) {
+            let multIndex = equationCopy.indexOf('*')
+            let divIndex = equationCopy.indexOf('/')
+            if (multIndex > divIndex) {
+                let temp = division(equationCopy[divIndex - 1], equationCopy[divIndex + 1])
+                equationCopy.splice((divIndex - 1), 3, temp)
+            }
+            else {
+                let temp = multiplication(equationCopy[multIndex - 1], equationCopy[multIndex + 1])
+                equationCopy.splice((multIndex - 1), 3, temp)
+            }
+        }
+        if (equationCopy.includes('*')) {
+            let multIndex = equationCopy.indexOf('*'); 
+            let temp = multiplication(equationCopy[multIndex - 1], equationCopy[multIndex + 1]);
+            equationCopy.splice((multIndex - 1), 3, temp);
+        }
+        else if (equationCopy.includes('/')) {
+            let divIndex = equationCopy.indexOf('/');
+            let temp = division(equationCopy[divIndex - 1], equationCopy[divIndex + 1]);
+            equationCopy.splice((divIndex - 1), 3, temp);
+        }
+    }
+    return equationCopy[0];
+}
+
+
+function division (a, b) {
+    return +a / +b;
+}
+
+function multiplication (a,b) {
+    return +a * +b;
+}
+
+function addition (a,b) {
+    return +a + +b;
+}
+
+function substraction (a,b) {
+    return +a - +b;
+}
