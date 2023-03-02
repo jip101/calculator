@@ -35,7 +35,12 @@ operators.forEach(operator => operator.addEventListener('click', () => {
         }
         equationCopy = [...equation];
         ans = calculate(equationCopy);
-        display.textContent = ans;
+        if (ans == 'error') {
+            display.textContent = 'ERROR: CANNOT DIVIDE BY 0';
+        }
+        else {
+            display.textContent = ans;
+        }
     }
 }));
 
@@ -89,6 +94,9 @@ function calculate (equationCopy) {
             let divIndex = equationCopy.indexOf('/')
             if (multIndex > divIndex) {
                 let temp = division(equationCopy[divIndex - 1], equationCopy[divIndex + 1])
+                if (temp == 'error') {
+                    return 'error'
+                }
                 equationCopy.splice((divIndex - 1), 3, temp)
             }
             else {
@@ -104,6 +112,9 @@ function calculate (equationCopy) {
         else if (equationCopy.includes('/')) {
             let divIndex = equationCopy.indexOf('/');
             let temp = division(equationCopy[divIndex - 1], equationCopy[divIndex + 1]);
+            if (temp == 'error') {
+                return 'error'
+            }
             equationCopy.splice((divIndex - 1), 3, temp);
         }
     }
@@ -112,7 +123,12 @@ function calculate (equationCopy) {
 
 
 function division (a, b) {
-    return +a / +b;
+    if (b == 0) {
+        return 'error';
+    }
+    else {
+        return +a / +b;
+    }
 }
 
 function multiplication (a,b) {
