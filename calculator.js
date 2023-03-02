@@ -46,7 +46,6 @@ operators.forEach(operator => operator.addEventListener('click', () => {
             display.textContent = 'SYNTAX ERROR';
         }
         else {
-            console.log('wrong')
             display.textContent = ans;
         }
     }
@@ -80,6 +79,9 @@ del.addEventListener('click', () => {
     if (!currentValue && equation.length > 0) {
         currentValue = equation.pop();
         currentValue = currentValue.trim().slice(0, -1);
+        if (!isNaN(equation[equation.length - 1])){
+            currentValue = equation.pop();
+        }
 
     }
     else if (currentValue.trim() == '0.' || currentValue == ' ') {
@@ -88,7 +90,6 @@ del.addEventListener('click', () => {
     else if (currentValue) {
         currentValue = currentValue.trim().slice(0, -1);
     }
-
     subDisplay.textContent = equation.join(' ') + ' ' + currentValue;
 });
 
