@@ -28,17 +28,25 @@ operators.forEach(operator => operator.addEventListener('click', () => {
         currentValue = '';
         subDisplay.textContent = equation.join(' ');
     }
+    else if (operator.value !== '=' && !isNaN(equation[equation.length - 1])) {
+        equation.push(operator.value);
+        subDisplay.textContent = equation.join(' ');
+    }
     else if (operator.value === '=') {
         if (currentValue) {
             equation.push(currentValue);
-            currentValue = '';
         }
         equationCopy = [...equation];
         ans = calculate(equationCopy);
+        currentValue = equation.pop();
         if (ans == 'error') {
             display.textContent = 'ERROR: CANNOT DIVIDE BY 0';
         }
+        else if (isNaN(ans)) {
+            display.textContent = 'SYNTAX ERROR';
+        }
         else {
+            console.log('wrong')
             display.textContent = ans;
         }
     }
@@ -72,9 +80,7 @@ del.addEventListener('click', () => {
     if (!currentValue && equation.length > 0) {
         currentValue = equation.pop();
         currentValue = currentValue.trim().slice(0, -1);
-        if (!currentValue && equation.length > 0) {
-            currentValue = equation.pop()
-        }
+
     }
     else if (currentValue.trim() == '0.' || currentValue == ' ') {
         currentValue = currentValue.trim().slice(0, -2);
@@ -104,7 +110,7 @@ function calculate (equationCopy) {
                 equationCopy.splice((multIndex - 1), 3, temp)
             }
         }
-        if (equationCopy.includes('*')) {
+        else if (equationCopy.includes('*')) {
             let multIndex = equationCopy.indexOf('*'); 
             let temp = multiplication(equationCopy[multIndex - 1], equationCopy[multIndex + 1]);
             equationCopy.splice((multIndex - 1), 3, temp);
@@ -118,6 +124,32 @@ function calculate (equationCopy) {
             equationCopy.splice((divIndex - 1), 3, temp);
         }
     }
+    while (equationCopy.includes('+') || equationCopy.includes('-')) {
+        if (equationCopy.includes('+') && equationCopy.includes('-')) {
+            let addIndex = equationCopy.indexOf('+')
+            let subIndex = equationCopy.indexOf('-')
+            if (addIndex > subIndex) {
+                let temp = substraction(equationCopy[subIndex - 1], equationCopy[subIndex + 1])
+                equationCopy.splice((subIndex - 1), 3, temp)
+            }
+            else {
+                let temp = addition(equationCopy[addIndex - 1], equationCopy[addIndex + 1])
+                equationCopy.splice((addIndex - 1), 3, temp)
+            }
+        }
+        else if (equationCopy.includes('+')) {
+            let addIndex = equationCopy.indexOf('+'); 
+            let temp = addition(equationCopy[addIndex - 1], equationCopy[addIndex + 1]);
+            equationCopy.splice((addIndex - 1), 3, temp);
+        }
+        else if (equationCopy.includes('-')) {
+            let subIndex = equationCopy.indexOf('-');
+            let temp = substraction(equationCopy[subIndex - 1], equationCopy[subIndex + 1]);
+            equationCopy.splice((subIndex - 1), 3, temp);
+        }
+
+    }
+
     return equationCopy[0];
 }
 
